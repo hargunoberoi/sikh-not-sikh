@@ -7,7 +7,7 @@ This project implements a transfer learning approach to classify images of peopl
 1. Install the required packages:
 
 ```bash
-pip install torch torchvision pillow matplotlib numpy
+pip install -r requirements.txt
 ```
 
 2. Make sure your dataset is organized in the following structure:
@@ -55,13 +55,31 @@ Training parameters:
 
 ## Inference
 
-To classify new images using the trained model, run:
+### Command Line
+
+To classify new images using the trained model from the command line, run:
 
 ```bash
 python inference.py path/to/your/image.jpg [path/to/model.pth]
 ```
 
 The inference script will load the model and output the prediction with confidence score.
+
+### Web Interface
+
+The project includes a Gradio web interface for easy image classification:
+
+```bash
+python app.py
+```
+
+This will launch a local web server where you can:
+
+- Upload images through the browser
+- See classification results with confidence scores for both classes
+- Try sample images if available
+
+The web interface makes it easy for non-technical users to interact with the model.
 
 ## Model Architecture
 
