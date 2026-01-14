@@ -255,7 +255,7 @@ def predict_image(model, image_path):
     return class_names[preds[0]]
 
 # Load and set up the model
-model = models.resnet18(weights='IMAGENET1K_V1')
+model = models.resnet18(weights='IMAGENET1K_V1' )
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, len(class_names))
 model = model.to(device)
@@ -266,7 +266,7 @@ optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
 # Train the model
-model = train_model(model, criterion, optimizer, exp_lr_scheduler, num_epochs=25)
+model = train_model(model, criterion, optimizer, exp_lr_scheduler, num_epochs=0)
 
 # Save the model
 save_model(model, 'model.pth')

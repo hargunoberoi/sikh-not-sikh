@@ -1,6 +1,7 @@
 # harlist
 *.zip
 transfer_learning_tutorial.py
+images/
 
 # Python
 __pycache__/
