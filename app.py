@@ -18,7 +18,7 @@ transform = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-def load_model(model_path='model.pth', num_classes=2):
+def load_model(model_path='models/model.pth', num_classes=2):
     """
     Load a trained model for inference.
     """
@@ -34,7 +34,7 @@ def load_model(model_path='model.pth', num_classes=2):
     
     return model
 
-def predict_image(img, model, class_names=['Not Sikh', 'Sikh']):
+def predict_image(img, class_names=['Not Sikh', 'Sikh']):
     """
     Predict if a person in an image is Sikh or not.
     
@@ -53,7 +53,19 @@ def predict_image(img, model, class_names=['Not Sikh', 'Sikh']):
         
         # Preprocess the image
         img_tensor = transform(img).unsqueeze(0).to(device)
-        
+        # Load the model
+        try:
+            model = load_model('models/model.pth')
+            model_loaded = True
+        except Exception as e:
+            print(f"Error loading model: {e}")
+            print("Will attempt to load model when making predictions.")
+            model = None
+            model_loaded = False
+        if not model_loaded:
+            exception_message = "Model not loaded. Please ensure 'model.pth' is in the correct path and try again."
+            print(exception_message)
+            raise Exception(exception_message)
         # Make prediction
         with torch.no_grad():
             outputs = model(img_tensor)
@@ -72,32 +84,7 @@ def predict_image(img, model, class_names=['Not Sikh', 'Sikh']):
     except Exception as e:
         return {"Error": str(e)}
 
-# Load the model
-try:
-    model = load_model('model.pth')
-    model_loaded = True
-except Exception as e:
-    print(f"Error loading model: {e}")
-    print("Will attempt to load model when making predictions.")
-    model = None
-    model_loaded = False
 
-def classify_image(image):
-    """
-    Gradio interface function to classify an uploaded image.
-    """
-    global model, model_loaded
-    
-    # Try to load model if not loaded yet
-    if not model_loaded:
-        try:
-            model = load_model('model.pth')
-            model_loaded = True
-        except Exception as e:
-            return {"Error": f"Failed to load model: {str(e)}"}
-    
-    # Perform prediction
-    return predict_image(image, model)
 
 # Create Gradio interface
 title = "Sikh or Not Sikh Classifier"
@@ -108,7 +95,8 @@ The model returns confidence scores for both categories.
 
 # Define the interface
 demo = gr.Interface(
-    fn=classify_image,
+    fn=predict_image,
+    theme="default",
     inputs=gr.Image(type="pil"),
     outputs=gr.Label(num_top_classes=2),
     title=title,
